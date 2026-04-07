@@ -4,35 +4,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Car Game</title>
 <style>
-body { margin:0; background:#333; }
-canvas { display:block; margin:auto; }
-.controls {
- position:fixed; bottom:20px; width:100%;
- display:flex; justify-content:space-between;
-}
-button {
- width:80px; height:80px;
- border-radius:50%; border:none;
- background:#38bdf8;
-}
+body{margin:0;background:#111;}
+canvas{display:block;margin:auto;background:#222;}
 </style>
 </head>
 <body>
 
 <canvas id="c"></canvas>
 
-<div class="controls">
-<button ontouchstart="left=true" ontouchend="left=false">⬅️</button>
-<button ontouchstart="right=true" ontouchend="right=false">➡️</button>
-</div>
-
 <script>
 const c=document.getElementById("c");
-const x=c.getContext("2d");
-c.width=400; c.height=600;
+const ctx=c.getContext("2d");
+c.width=400;c.height=600;
 
 let car={x:180,y:500};
-let obs=[],score=0;
+let obs=[],score=0,speed=3;
 let left=false,right=false;
 
 document.addEventListener("keydown",e=>{
@@ -44,32 +30,52 @@ document.addEventListener("keyup",e=>{
  if(e.key==="ArrowRight") right=false;
 });
 
-setInterval(()=>obs.push({x:Math.random()*360,y:-60}),1200);
+setInterval(()=>obs.push({x:Math.random()*360,y:-60}),1000);
 
 function update(){
- if(left) car.x-=5;
- if(right) car.x+=5;
+ speed+=0.001;
+
+ if(left) car.x-=6;
+ if(right) car.x+=6;
 
  obs.forEach((o,i)=>{
-  o.y+=3;
-  if(o.y>600){ obs.splice(i,1); score++; }
+  o.y+=speed;
+
+  if(o.y>600){
+   obs.splice(i,1);
+   score++;
+  }
 
   if(Math.abs(car.x-o.x)<40 && Math.abs(car.y-o.y)<40){
-    alert("Game Over: "+score);
-    location.reload();
+   localStorage.setItem("carHigh",Math.max(score,localStorage.getItem("carHigh")||0));
+   alert("Game Over: "+score);
+   location.reload();
   }
  });
 }
 
 function draw(){
- x.clearRect(0,0,400,600);
- x.fillStyle="blue"; x.fillRect(car.x,car.y,40,60);
- x.fillStyle="red"; obs.forEach(o=>x.fillRect(o.x,o.y,40,60));
- x.fillText("Score:"+score,10,20);
+ ctx.clearRect(0,0,400,600);
+
+ ctx.fillStyle="white";
+ for(let i=0;i<600;i+=40){
+   ctx.fillRect(195,i,10,20);
+ }
+
+ ctx.fillStyle="blue";
+ ctx.fillRect(car.x,car.y,40,60);
+
+ ctx.fillStyle="red";
+ obs.forEach(o=>ctx.fillRect(o.x,o.y,40,60));
+
+ ctx.fillStyle="white";
+ ctx.fillText("Score: "+score,10,20);
+ ctx.fillText("High: "+(localStorage.getItem("carHigh")||0),10,40);
 }
 
-function loop(){ update(); draw(); requestAnimationFrame(loop); }
+function loop(){update();draw();requestAnimationFrame(loop);}
 loop();
 </script>
+
 </body>
 </html>
