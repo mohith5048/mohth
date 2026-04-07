@@ -3,69 +3,85 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Math Quiz</title>
+
 <style>
-body {
- margin:0; font-family:Arial;
- background:#0f172a; color:white;
- display:flex; justify-content:center;
- align-items:center; height:100vh;
+body{
+ margin:0;
+ font-family:Arial;
+ background:#020617;
+ color:white;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ height:100vh;
 }
-.box {
+
+.box{
  background:#1e293b;
- padding:20px;
+ padding:25px;
  border-radius:15px;
  text-align:center;
- width:90%; max-width:300px;
+ width:90%;
+ max-width:320px;
+ box-shadow:0 10px 30px black;
 }
-input,button {
- width:90%; padding:10px;
+
+input,button{
+ width:90%;
+ padding:12px;
  margin-top:10px;
  border-radius:10px;
  border:none;
+ font-size:18px;
 }
-button { background:#38bdf8; }
+
+button{background:#38bdf8;}
 </style>
 </head>
+
 <body>
 
 <div class="box">
-<h2>⚡ Math Quiz</h2>
-<div id="q">0+0</div>
-<input id="ans" type="number">
+<h2>⚡ Math Rush</h2>
+<div id="q"></div>
+<input id="ans">
 <button onclick="check()">Submit</button>
 <div>Score: <span id="s">0</span></div>
+<div>High: <span id="h">0</span></div>
 <div>Time: <span id="t">30</span></div>
 </div>
 
 <script>
-let score=0,time=30,ans;
+let score=0,time=30,answer;
 
 function gen(){
  let a=Math.floor(Math.random()*10);
  let b=Math.floor(Math.random()*10);
- ans=a+b;
- document.getElementById("q").innerText=a+" + "+b;
+ answer=a+b;
+ q.innerText=a+" + "+b;
 }
 
 function check(){
- let val=parseInt(ansInput.value);
- if(val===ans){ score++; time+=2; }
+ if(parseInt(ans.value)===answer){
+  score++;
+  time+=2;
+ }
  s.innerText=score;
- ansInput.value="";
+ ans.value="";
  gen();
 }
-
-const ansInput=document.getElementById("ans");
-const s=document.getElementById("s");
-const t=document.getElementById("t");
 
 setInterval(()=>{
  time--;
  t.innerText=time;
+
  if(time<=0){
+  localStorage.setItem("mathHigh",Math.max(score,localStorage.getItem("mathHigh")||0));
   alert("Score: "+score);
   location.reload();
  }
+
+ h.innerText=localStorage.getItem("mathHigh")||0;
 },1000);
 
 gen();
