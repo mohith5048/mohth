@@ -1,40 +1,69 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Game Hub</title>
+<title>Game Hub</title>
+
 <style>
 body {
   margin:0;
-  font-family: Arial;
-  background:#0f172a;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,#0f172a,#020617);
   color:white;
   display:flex;
   justify-content:center;
   align-items:center;
   height:100vh;
 }
+
 .container {
   text-align:center;
 }
-a {
-  display:block;
-  margin:15px;
-  padding:15px;
+
+h1 {
+  font-size:40px;
+  margin-bottom:30px;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:1fr;
+  gap:20px;
+}
+
+.card {
+  padding:20px;
+  border-radius:15px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  transition:0.3s;
+  box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}
+
+.card:hover {
+  transform:scale(1.05);
   background:#38bdf8;
   color:black;
+}
+
+a {
   text-decoration:none;
-  border-radius:10px;
-  font-size:20px;
+  color:inherit;
+  font-size:22px;
 }
 </style>
 </head>
+
 <body>
 <div class="container">
-  <h1>🎮 My Games</h1>
-  <a href="shooting.html">🔫 Shooting Game</a>
-  <a href="car-game.html">🚗 Car Game</a>
-  <a href="math-quiz.html">⚡ Math Quiz</a>
+  <h1>🎮 Game Hub</h1>
+
+  <div class="grid">
+    <div class="card"><a href="shooting.html">🔫 Shooting Game</a></div>
+    <div class="card"><a href="car-game.html">🚗 Car Game</a></div>
+    <div class="card"><a href="math-quiz.html">⚡ Math Quiz</a></div>
+  </div>
 </div>
 </body>
 </html>
