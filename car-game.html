@@ -1,95 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Simple Car Game</title>
-  <style>
-    body { margin: 0; overflow: hidden; background: #333; }
-    canvas { display: block; margin: auto; background: #555; }
-  </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Game</title>
+<style>
+body { margin:0; background:#333; }
+canvas { display:block; margin:auto; }
+.controls {
+ position:fixed; bottom:20px; width:100%;
+ display:flex; justify-content:space-between;
+}
+button {
+ width:80px; height:80px;
+ border-radius:50%; border:none;
+ background:#38bdf8;
+}
+</style>
 </head>
 <body>
-<canvas id="gameCanvas"></canvas>
+
+<canvas id="c"></canvas>
+
+<div class="controls">
+<button ontouchstart="left=true" ontouchend="left=false">⬅️</button>
+<button ontouchstart="right=true" ontouchend="right=false">➡️</button>
+</div>
+
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = 400;
-canvas.height = 600;
+const c=document.getElementById("c");
+const x=c.getContext("2d");
+c.width=400; c.height=600;
 
-let car = { x: 180, y: 500, width: 40, height: 60 };
-let obstacles = [];
-let score = 0;
+let car={x:180,y:500};
+let obs=[],score=0;
+let left=false,right=false;
 
-let keys = {};
-document.addEventListener('keydown', e => keys[e.key] = true);
-document.addEventListener('keyup', e => keys[e.key] = false);
+document.addEventListener("keydown",e=>{
+ if(e.key==="ArrowLeft") left=true;
+ if(e.key==="ArrowRight") right=true;
+});
+document.addEventListener("keyup",e=>{
+ if(e.key==="ArrowLeft") left=false;
+ if(e.key==="ArrowRight") right=false;
+});
 
-function spawnObstacle() {
-  let x = Math.random() * (canvas.width - 40);
-  obstacles.push({ x: x, y: -60, width: 40, height: 60, speed: 3 });
-}
+setInterval(()=>obs.push({x:Math.random()*360,y:-60}),1200);
 
-setInterval(spawnObstacle, 1200);
+function update(){
+ if(left) car.x-=5;
+ if(right) car.x+=5;
 
-function update() {
-  // Move car
-  if (keys['ArrowLeft'] && car.x > 0) car.x -= 5;
-  if (keys['ArrowRight'] && car.x < canvas.width - car.width) car.x += 5;
+ obs.forEach((o,i)=>{
+  o.y+=3;
+  if(o.y>600){ obs.splice(i,1); score++; }
 
-  // Move obstacles
-  obstacles.forEach((obs, i) => {
-    obs.y += obs.speed;
-
-    // Collision detection
-    if (
-      car.x < obs.x + obs.width &&
-      car.x + car.width > obs.x &&
-      car.y < obs.y + obs.height &&
-      car.y + car.height > obs.y
-    ) {
-      alert('Game Over! Score: ' + score);
-      document.location.reload();
-    }
-
-    if (obs.y > canvas.height) {
-      obstacles.splice(i, 1);
-      score++;
-    }
-  });
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Road lines
-  ctx.fillStyle = 'white';
-  for (let i = 0; i < canvas.height; i += 40) {
-    ctx.fillRect(195, i, 10, 20);
+  if(Math.abs(car.x-o.x)<40 && Math.abs(car.y-o.y)<40){
+    alert("Game Over: "+score);
+    location.reload();
   }
-
-  // Car
-  ctx.fillStyle = 'blue';
-  ctx.fillRect(car.x, car.y, car.width, car.height);
-
-  // Obstacles
-  ctx.fillStyle = 'red';
-  obstacles.forEach(obs => {
-    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-  });
-
-  // Score
-  ctx.fillStyle = 'white';
-  ctx.font = '20px Arial';
-  ctx.fillText('Score: ' + score, 10, 30);
+ });
 }
 
-function gameLoop() {
-  update();
-  draw();
-  requestAnimationFrame(gameLoop);
+function draw(){
+ x.clearRect(0,0,400,600);
+ x.fillStyle="blue"; x.fillRect(car.x,car.y,40,60);
+ x.fillStyle="red"; obs.forEach(o=>x.fillRect(o.x,o.y,40,60));
+ x.fillText("Score:"+score,10,20);
 }
 
-gameLoop();
+function loop(){ update(); draw(); requestAnimationFrame(loop); }
+loop();
 </script>
 </body>
 </html>
